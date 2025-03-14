@@ -1,4 +1,4 @@
-import styles from "./TaskCard.module.sass";
+import styles from "./TaskCard.module.scss";
 
 export function TaskCard() {
   return <div className={styles.root}>TaskCard</div>;
