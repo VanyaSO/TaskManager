@@ -1,12 +1,6 @@
-// import styles from "./SearchBar.module.scss";
-
-// export function SearchBar() {
-//   return <div className={styles.root}>SearchBar</div>;
-// }
-
-import React, { useState } from "react";
-import { Input, Button, Drawer, Checkbox } from "antd";
-import { SearchOutlined, SettingOutlined } from "@ant-design/icons";
+import React, { useState } from 'react';
+import { Input, Button, Drawer, Checkbox } from 'antd';
+import { SearchOutlined, SettingOutlined } from '@ant-design/icons';
 
 interface SearchFilters {
   title: boolean;
@@ -19,7 +13,7 @@ interface SearchBarProps {
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
   const [filters, setFilters] = useState<SearchFilters>({
     title: true,
     description: true,
@@ -34,7 +28,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 
   // Обработчик клика на кнопку поиска
   const handleSearchClick = () => {
-    onSearch(searchText, filters); // Запуск поиска
+    // Если фильтры не выбраны, то искать по всем полям
+    if (!filters.title && !filters.description && !filters.tags) {
+      // В этом случае ищем по всем полям
+      onSearch(searchText, { title: true, description: true, tags: true });
+    } else {
+      // Иначе ищем по выбранным фильтрам
+      onSearch(searchText, filters);
+    }
   };
 
   // Обработчик открытия Drawer (всплывающее окно с фильтрами)
@@ -62,7 +63,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         onChange={handleSearchTextChange}
         style={{ width: 300, marginRight: 8 }}
       />
-
+      
       {/* Кнопка поиска */}
       <Button
         type="primary"
@@ -89,21 +90,21 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       >
         <Checkbox
           checked={filters.title}
-          onChange={() => handleFilterChange("title")}
+          onChange={() => handleFilterChange('title')}
         >
           Заголовок
         </Checkbox>
         <br />
         <Checkbox
           checked={filters.description}
-          onChange={() => handleFilterChange("description")}
+          onChange={() => handleFilterChange('description')}
         >
           Описание
         </Checkbox>
         <br />
         <Checkbox
           checked={filters.tags}
-          onChange={() => handleFilterChange("tags")}
+          onChange={() => handleFilterChange('tags')}
         >
           Теги
         </Checkbox>
