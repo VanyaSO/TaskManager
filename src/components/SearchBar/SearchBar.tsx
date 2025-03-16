@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Input, Button, Drawer, Checkbox } from 'antd';
-import { SearchOutlined, SettingOutlined } from '@ant-design/icons';
+import React, { useState } from "react";
+import { Input, Button, Drawer, Checkbox } from "antd";
+import { SearchOutlined, SettingOutlined } from "@ant-design/icons";
 
 interface SearchFilters {
   title: boolean;
@@ -13,7 +13,7 @@ interface SearchBarProps {
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [filters, setFilters] = useState<SearchFilters>({
     title: true,
     description: true,
@@ -63,7 +63,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         onChange={handleSearchTextChange}
         style={{ width: 300, marginRight: 8 }}
       />
-      
+
       {/* Кнопка поиска */}
       <Button
         type="primary"
@@ -90,21 +90,21 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       >
         <Checkbox
           checked={filters.title}
-          onChange={() => handleFilterChange('title')}
+          onChange={() => handleFilterChange("title")}
         >
           Заголовок
         </Checkbox>
         <br />
         <Checkbox
           checked={filters.description}
-          onChange={() => handleFilterChange('description')}
+          onChange={() => handleFilterChange("description")}
         >
           Описание
         </Checkbox>
         <br />
         <Checkbox
           checked={filters.tags}
-          onChange={() => handleFilterChange('tags')}
+          onChange={() => handleFilterChange("tags")}
         >
           Теги
         </Checkbox>
