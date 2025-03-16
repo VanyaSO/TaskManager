@@ -1,0 +1,7 @@
+@use "../../../src/assets/styles/variables" as vars;
+
+.root {
+  padding: 10px;
+  border-radius: 16px;
+  background-color: vars.$silver;
+}
