@@ -1,3 +1,43 @@
-.root {
+@use "../../assets/styles/variables.scss" as vars;
+@use "../../assets/styles/mixins.scss" as minins;
 
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.title {
+  @include minins.truncate-multiline(1);
+  padding-right: 24px;
+  margin-bottom: 8px;
+}
+
+.description {
+  @include minins.truncate-multiline();
+  font-size: 14px;
+  line-height: 18px;
+  color: vars.$silver-dark;
+  margin-bottom: 16px;
+
+}
+
+.showDetails {
+  position: absolute;
+  top: 30px;
+  right: 24px;
+}
+
+.tags {
+  margin-top: 8px;
+}
+
+.tag {
+  padding: 4px 8px;
+  border-radius: 16px;
+  font-size: 11px;
+  color: vars.$pink;
+  background-color: vars.$pink-light;
 }
