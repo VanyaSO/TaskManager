@@ -1,5 +1,5 @@
 import { Task, TaskStatus } from "../types/Task.ts";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: Task[] = [
   {
@@ -53,10 +53,23 @@ const initialState: Task[] = [
   },
 ];
 
+// const tasksSlice = createSlice({
+//   name: "tasks",
+//   initialState,
+//   reducers: {},
+// });
+
 const tasksSlice = createSlice({
   name: "tasks",
   initialState,
-  reducers: {},
+  reducers: {
+    // Редьюсер для добавления задачи
+    addTask: (state, action: PayloadAction<Task>) => {
+      state.push(action.payload); // Добавляем задачу в список
+    },
+    // Другие редьюсеры
+  },
 });
 
+export const { addTask } = tasksSlice.actions;
 export default tasksSlice.reducer;

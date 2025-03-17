@@ -15,7 +15,7 @@ export function TasksSection({ tasks, className }: TasksSectionProps) {
   }
 
   return (
-    <Row gutter={[16,16]} className={cn(styles.root, className)}>
+    <Row gutter={[16, 16]} className={cn(styles.root, className)}>
       {tasks.map((task) => (
         <Col key={task.id} span={8}>
           <TaskCard task={task} />
