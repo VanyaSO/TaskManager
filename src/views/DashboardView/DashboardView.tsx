@@ -9,7 +9,7 @@ import { Task } from "../../shared/types/task.ts";
 import styles from "./DashboardView.module.scss";
 import { CreateUpdateTaskModal } from "../../components/Task/CreateUpdateTaskModal/CreateUpdateTaskModal.tsx";
 import { useGetTasks } from "../../shared/hooks/useTasks.ts";
-import { setTasks } from "../../shared/store/taskSlice.ts";
+import { setTasksAction } from "../../shared/store/taskSlice.ts";
 import { selectorTasks } from "../../shared/store/selectors.ts";
 import { AppDispatch } from "../../shared/store/store.ts";
 
@@ -23,7 +23,7 @@ export function DashboardView() {
 
   useEffect(() => {
     if (!isLoading) {
-      dispatch(setTasks(data));
+      dispatch(setTasksAction(data));
     }
   }, [data]);
 

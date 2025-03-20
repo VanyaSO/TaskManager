@@ -1,9 +1,9 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { CreateTaskRequest, Task } from "../types/task.ts";
-import { createTask, getTasks } from "../api/taskApi.ts";
+import {CreateUpdateTaskRequest, Task, UpdateTaskArgs} from "../types/task.ts";
+import {createTask, getTasks, updateTask} from "../api/taskApi.ts";
 import { message } from "antd";
 import { useDispatch } from "react-redux";
-import { addTask } from "../store/taskSlice.ts";
+import { addTaskAction } from "../store/taskSlice.ts";
 
 export const useGetTasks = (section: string) => {
   return useQuery<Task[], Error>({
@@ -18,15 +18,21 @@ export const useCreateTask = () => {
 
   return {
     contextHolder,
-    createTask: useMutation<Task, Error, CreateTaskRequest>({
+    createTask: useMutation<Task, Error, CreateUpdateTaskRequest>({
       mutationFn: createTask,
       onSuccess: (task: Task) => {
         messageApi.success("Задача добавлена");
-        dispatch(addTask(task));
+        dispatch(addTaskAction(task));
       },
-      onError: (error) => {
+      onError: (error: Error) => {
         messageApi.error(error.message);
       },
     }),
   };
+};
+
+export const useUpdateTask = () => {
+    return useMutation<Task, Error, UpdateTaskArgs>({
+        mutationFn: ({id, task}: UpdateTaskArgs) => updateTask(id, task),
+    })
 };
