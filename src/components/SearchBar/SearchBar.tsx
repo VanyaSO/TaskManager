@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Input, Button, Drawer, Checkbox } from "antd";
-import { SearchOutlined, SettingOutlined } from "@ant-design/icons";
+import { Button, Drawer, Checkbox } from "antd";
+import { SettingOutlined } from "@ant-design/icons";
+import { Task } from "../../shared/types/task.ts";
+import Search from "antd/es/input/Search";
 
 interface SearchFilters {
   title: boolean;
@@ -9,21 +11,47 @@ interface SearchFilters {
 }
 
 interface SearchBarProps {
-  onSearch: (searchText: string, filters: SearchFilters) => void;
+  tasks: Task[];
+  setFilteredTasks: (filteredTasks: Task[]) => void;
 }
 
-export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-  const [searchText, setSearchText] = useState("");
+export const SearchBar: React.FC<SearchBarProps> = ({
+  tasks,
+  setFilteredTasks,
+}) => {
+  const [searchText, setSearchText] = useState<string>("");
   const [filters, setFilters] = useState<SearchFilters>({
     title: true,
     description: true,
     tags: true,
   });
-  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Обработчик изменения текста поиска
   const handleSearchTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
+  };
+
+  const handleSearch = (
+    searchText: string,
+    filters: { title: boolean; description: boolean; tags: boolean },
+  ) => {
+    if (!searchText.trim()) {
+      setFilteredTasks(tasks);
+      return;
+    }
+
+    const lowerCaseSearch = searchText.toLowerCase();
+    const results = tasks.filter(
+      (task) =>
+        (filters.title && task.title.toLowerCase().includes(lowerCaseSearch)) ||
+        (filters.description &&
+          task.description.toLowerCase().includes(lowerCaseSearch)) ||
+        (filters.tags &&
+          task.tags.some((tag) => tag.toLowerCase().includes(lowerCaseSearch))),
+    );
+
+    setFilteredTasks(results);
   };
 
   // Обработчик клика на кнопку поиска
@@ -31,21 +59,21 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     // Если фильтры не выбраны, то искать по всем полям
     if (!filters.title && !filters.description && !filters.tags) {
       // В этом случае ищем по всем полям
-      onSearch(searchText, { title: true, description: true, tags: true });
+      handleSearch(searchText, { title: true, description: true, tags: true });
     } else {
       // Иначе ищем по выбранным фильтрам
-      onSearch(searchText, filters);
+      handleSearch(searchText, filters);
     }
   };
 
   // Обработчик открытия Drawer (всплывающее окно с фильтрами)
   const showDrawer = () => {
-    setIsDrawerVisible(true);
+    setIsDrawerOpen(true);
   };
 
   // Обработчик закрытия Drawer
   const closeDrawer = () => {
-    setIsDrawerVisible(false);
+    setIsDrawerOpen(false);
   };
 
   // Обработчик изменения фильтров
@@ -54,24 +82,24 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     setFilters(updatedFilters);
   };
 
+  const handleClearInput = () => {
+    setSearchText("");
+    setFilteredTasks(tasks);
+  };
+
   return (
-    <div className="search-bar">
+    <div>
       {/* Поле ввода поиска */}
-      <Input
+      <Search
         placeholder="Поиск..."
+        allowClear
+        onClear={handleClearInput}
+        enterButton
         value={searchText}
         onChange={handleSearchTextChange}
-        style={{ width: 300, marginRight: 8 }}
+        onSearch={handleSearchClick}
+        style={{ width: 200 }}
       />
-
-      {/* Кнопка поиска */}
-      <Button
-        type="primary"
-        icon={<SearchOutlined />}
-        onClick={handleSearchClick}
-      >
-        Поиск
-      </Button>
 
       {/* Кнопка настроек */}
       <Button
@@ -85,7 +113,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         title="Настройки фильтрации"
         placement="right"
         onClose={closeDrawer}
-        visible={isDrawerVisible}
+        open={isDrawerOpen}
         width={200}
       >
         <Checkbox

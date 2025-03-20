@@ -1,0 +1,12 @@
+@use "../../shared/assets/styles/variables.scss" as vars;
+
+.root {
+  padding-top: 40px;
+  padding-bottom: 80px;
+}
+
+.tasks_list {
+  padding: 10px;
+  border-radius: 16px;
+  background-color: vars.$silver;
+}
