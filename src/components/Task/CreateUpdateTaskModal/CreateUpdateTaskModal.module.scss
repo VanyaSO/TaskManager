@@ -1,0 +1,14 @@
+.tags {
+  margin-top: 8px;
+}
+
+.tag {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.button_container {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: end;
+}

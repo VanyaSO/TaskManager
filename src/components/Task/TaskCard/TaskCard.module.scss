@@ -1,12 +1,12 @@
-@use "../../assets/styles/variables.scss" as vars;
-@use "../../assets/styles/mixins.scss" as minins;
+@use "../../../shared/assets/styles/variables" as vars;
+@use "../../../shared/assets/styles/mixins" as minins;
 
 .root {
-  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+  min-height: 290px;
 }
 
 .title {
@@ -21,23 +21,30 @@
   line-height: 18px;
   color: vars.$silver-dark;
   margin-bottom: 16px;
-
 }
 
-.showDetails {
-  position: absolute;
-  top: 30px;
-  right: 24px;
+.dateLine {
+  width: fit-content;
+  font-size: 12px;
+
+  &:not(:last-child) {
+    margin-bottom: 4px;
+  }
 }
 
 .tags {
-  margin-top: 8px;
+  margin-top: 16px;
 }
 
 .tag {
   padding: 4px 8px;
   border-radius: 16px;
   font-size: 11px;
-  color: vars.$pink;
-  background-color: vars.$pink-light;
+  color: vars.$silver-dark;
+  background-color: vars.$light;
+  border: 1px solid vars.$silver-dark;
+}
+
+.status {
+  margin-top: 10px;
 }

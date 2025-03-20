@@ -2,19 +2,19 @@ export type Task = {
   id: string;
   title: string;
   description: string;
-  createdAt: Date;
-  lastModifiedAt?: Date | undefined;
+  createdAt: string;
+  lastModifiedAt?: string | null;
   status: TaskStatus;
-  finalizedAt?: Date | undefined;
+  finalizedAt?: string | null;
   isArchived: boolean;
   tags: string[];
   options?: TaskAppearanceOptions;
 };
 
 export enum TaskStatus {
-  Active = "Active",
-  Completed = "Completed",
-  Deleted = "Deleted",
+  InProgress = "В процессе",
+  Completed = "Выполнено",
+  Deleted = "Удалено",
 }
 
 export type TaskAppearanceOptions = {
@@ -32,4 +32,10 @@ export type BackgroundImageOptions = {
   height?: number;
   positionX?: number;
   positionY?: number;
+};
+
+export type CreateTaskRequest = {
+  title: string;
+  description: string;
+  tags: string;
 };
