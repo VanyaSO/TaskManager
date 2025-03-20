@@ -34,8 +34,15 @@ export type BackgroundImageOptions = {
   positionY?: number;
 };
 
-export type CreateTaskRequest = {
+export type CreateUpdateTaskRequest = {
   title: string;
   description: string;
   tags: string;
+  status?: TaskStatus;
+  isArchived?: boolean;
 };
+
+export type UpdateTaskArgs = {
+  id: string;
+  task: Partial<CreateUpdateTaskRequest>;
+}
