@@ -1,14 +1,17 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./assets/styles/globals.scss";
-import { Dashboard } from "./pages/Dashboard/Dashboard.tsx";
+import { DashboardView } from "./views/DashboardView/DashboardView.tsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import "antd/dist/reset.css";
+import "./shared/assets/styles/globals.scss";
 import { Provider } from "react-redux";
-import { store } from "./store/store.ts";
+import { store } from "./shared/store/store.ts";
+
+const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <Provider store={store}>
-      <Dashboard />
-    </Provider>
-  </StrictMode>,
+  <Provider store={store}>
+    <QueryClientProvider client={queryClient}>
+      <DashboardView />
+    </QueryClientProvider>
+  </Provider>,
 );
