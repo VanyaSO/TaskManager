@@ -3,18 +3,18 @@ export type Task = {
   title: string;
   description: string;
   createdAt: Date;
-  lastModifiedAt?: Date | undefined;
+  lastModifiedAt?: Date | null;
   status: TaskStatus;
-  finalizedAt?: Date | undefined;
+  finalizedAt?: Date | null;
   isArchived: boolean;
   tags: string[];
   options?: TaskAppearanceOptions;
 };
 
 export enum TaskStatus {
-  Active = "Active",
-  Completed = "Completed",
-  Deleted = "Deleted",
+  InProgress = "В процессе",
+  Completed = "Выполнено",
+  Deleted = "Удалено",
 }
 
 export type TaskAppearanceOptions = {

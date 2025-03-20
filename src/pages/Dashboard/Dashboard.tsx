@@ -12,11 +12,19 @@ import {
 import { MainLayout } from "../../widgets/MainLayout/MainLayout.tsx";
 import { SearchBar } from "../../components/SearchBar/SearchBar.tsx";
 import { TasksSection } from "../../components/TasksSection/TasksSection.tsx";
-import { ReloadOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  ReloadOutlined,
+  PlusOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import { Task, TaskStatus } from "../../types/Task.ts";
 import { selectTasks } from "../../store/selectors.ts";
 import { useDispatch, useSelector } from "react-redux";
-import { addTask } from "../../store/taskSlice.ts"; // Импортируем экшн для добавления задачи
+import { addTask } from "../../store/taskSlice.ts";
+import {
+  CardSettings,
+  CardStyleSettings,
+} from "../../components/CardSettings/CardSettings.tsx";
 import styles from "./Dashboard.module.scss";
 
 export function Dashboard() {
@@ -25,30 +33,49 @@ export function Dashboard() {
   const [filteredTasks, setFilteredTasks] = useState<Task[]>(tasks);
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isSettingsVisible, setIsSettingsVisible] = useState(false);
   const [form] = Form.useForm();
+
+  // Получаем настройки из localStorage, если они есть
+  const savedCardSettings = localStorage.getItem("cardSettings");
+  const initialSettings: CardStyleSettings = savedCardSettings
+    ? JSON.parse(savedCardSettings)
+    : {
+        backgroundColor: "#ffffff",
+        padding: "16px",
+        borderRadius: "8px",
+        titleFontSize: "20px",
+        descriptionFontSize: "14px",
+        tagColor: "#ff6347",
+      };
+
+  const [cardSettings, setCardSettings] =
+    useState<CardStyleSettings>(initialSettings);
+
   const dispatch = useDispatch();
 
-  // Обработчик клика по кнопке "Tasks"
+  const handleSettingsChange = (newSettings: CardStyleSettings) => {
+    setCardSettings(newSettings);
+    localStorage.setItem("cardSettings", JSON.stringify(newSettings));
+  };
+
   const handleClickTasksTab = () => {
     setActiveSection("tasks");
     setFilteredTasks(tasks);
     setSearchPerformed(false);
   };
 
-  // Обработчик клика по кнопке "Archive"
   const handleClickArchiveTab = () => {
     setActiveSection("archive");
     setFilteredTasks(tasks.filter((task) => task.isArchived));
     setSearchPerformed(false);
   };
 
-  // Обработчик обновления списка задач
   const refetch = () => {
     setFilteredTasks(tasks);
     setSearchPerformed(false);
   };
 
-  // Обработчик поиска
   const handleSearch = (
     searchText: string,
     filters: { title: boolean; description: boolean; tags: boolean },
@@ -73,15 +100,14 @@ export function Dashboard() {
     setSearchPerformed(true);
   };
 
-  // Обработчик добавления новой задачи
   const handleAddTask = (values: any) => {
     const newTask: Task = {
       id: Date.now().toString(),
       title: values.title,
       description: values.description,
       createdAt: new Date(),
-      lastModifiedAt: new Date(),
-      status: TaskStatus.Active,
+      lastModifiedAt: undefined,
+      status: TaskStatus.InProgress,
       isArchived: false,
       tags: values.tags.split(",").map((tag: string) => tag.trim()),
     };
@@ -95,7 +121,6 @@ export function Dashboard() {
     <MainLayout>
       <div className={styles.root}>
         <div className="container">
-          {/* Верхняя панель с кнопками */}
           <Flex justify="space-between">
             <Flex gap={10}>
               <Button
@@ -111,7 +136,6 @@ export function Dashboard() {
                 Archive
               </Button>
               <Button type="text" onClick={refetch} icon={<ReloadOutlined />} />
-              {/* Кнопка добавления задачи */}
               <Button
                 type="primary"
                 icon={<PlusOutlined />}
@@ -122,27 +146,31 @@ export function Dashboard() {
               </Button>
             </Flex>
 
-            {/* Компонент поиска */}
-            <SearchBar onSearch={handleSearch} />
+            <Flex gap={10}>
+              <SearchBar onSearch={handleSearch} />
+              <Button
+                type="default"
+                icon={<SettingOutlined />}
+                onClick={() => setIsSettingsVisible(true)}
+              />
+            </Flex>
           </Flex>
 
           <Divider />
 
-          {/* Вывод задач или сообщение о том, что задач не найдено */}
           {searchPerformed && filteredTasks.length === 0 ? (
             <Typography.Text type="secondary">
               Совпадений не найдено
             </Typography.Text>
           ) : (
-            <TasksSection tasks={filteredTasks} />
+            <TasksSection tasks={filteredTasks} cardSettings={cardSettings} />
           )}
         </div>
       </div>
 
-      {/* Модальное окно для добавления новой задачи */}
       <Modal
         title="Добавить задачу"
-        visible={isModalVisible}
+        open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
       >
@@ -188,6 +216,13 @@ export function Dashboard() {
           </Form.Item>
         </Form>
       </Modal>
+
+      <CardSettings
+        visible={isSettingsVisible}
+        onClose={() => setIsSettingsVisible(false)}
+        onSettingsChange={handleSettingsChange}
+        currentSettings={cardSettings}
+      />
     </MainLayout>
   );
 }

@@ -1,4 +1,4 @@
-import { Button, Card, Flex } from "antd";
+import { Button, Card } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -7,35 +7,55 @@ import {
 } from "@ant-design/icons";
 import { Task } from "../../types/Task.ts";
 import styles from "./TaskCard.module.scss";
-//import cn from "classnames"; // закомитил пока что
+import { CardStyleSettings } from "../CardSettings/CardSettings.tsx";
 
 type TaskCardProps = {
   task: Task;
+  cardSettings: CardStyleSettings;
 };
 
-export function TaskCard({ task }: TaskCardProps) {
+export function TaskCard({ task, cardSettings }: TaskCardProps) {
   return (
     <Card
       className={styles.root}
+      style={{
+        backgroundColor: cardSettings.backgroundColor,
+        padding: cardSettings.padding,
+        borderRadius: cardSettings.borderRadius,
+      }}
       actions={[
         <FileDoneOutlined key="done" />,
         <EditOutlined key="edit" />,
         <DeleteOutlined key="setting" />,
       ]}
     >
-      <h2 className={styles.title}>{task.title}</h2>
-      <p className={styles.description}>{task.description}</p>
+      <h2
+        className={styles.title}
+        style={{ fontSize: cardSettings.titleFontSize }}
+      >
+        {task.title}
+      </h2>
+      <p
+        className={styles.description}
+        style={{ fontSize: cardSettings.descriptionFontSize }}
+      >
+        {task.description}
+      </p>
       <div className={styles.createdAt}>
         Created at: {task.createdAt.toLocaleString()}
       </div>
       {task.tags.length > 0 && (
-        <Flex gap={8} className={styles.tags}>
-          {task.tags.map((tag: string, index: number) => (
-            <div key={index} className={styles.tag} color="pink">
+        <div className={styles.tags}>
+          {task.tags.map((tag, index) => (
+            <div
+              key={index}
+              className={styles.tag}
+              style={{ color: cardSettings.tagColor }}
+            >
               {tag}
             </div>
           ))}
-        </Flex>
+        </div>
       )}
       <Button
         className={styles.showDetails}

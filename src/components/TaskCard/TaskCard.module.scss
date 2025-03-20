@@ -31,13 +31,14 @@
 }
 
 .tags {
-  margin-top: 8px;
+  display: flex;           /* Размещение тегов в строку */
+  flex-wrap: wrap;         /* Теги будут переноситься на новую строку, если не хватает места */
+  gap: 10px;               /* Отступы между тегами */
 }
 
 .tag {
-  padding: 4px 8px;
-  border-radius: 16px;
-  font-size: 11px;
-  color: vars.$pink;
-  background-color: vars.$pink-light;
+  background-color: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;         /* Размер шрифта для тегов */
 }

@@ -85,7 +85,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         title="Настройки фильтрации"
         placement="right"
         onClose={closeDrawer}
-        visible={isDrawerVisible}
+        open={isDrawerVisible}
         width={200}
       >
         <Checkbox
