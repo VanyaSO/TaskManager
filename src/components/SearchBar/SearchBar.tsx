@@ -114,6 +114,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         placement="right"
         onClose={closeDrawer}
         open={isDrawerOpen}
+
         width={200}
       >
         <Checkbox
