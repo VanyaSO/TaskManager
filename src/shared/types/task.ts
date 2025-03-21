@@ -19,25 +19,13 @@ export enum TaskStatus {
 
 export type TaskAppearanceOptions = {
   backgroundColor?: string;
-  backgroundImage?: BackgroundImageOptions;
-  width: number;
-  height: number;
-};
-
-export type BackgroundImageOptions = {
-  imageUrl?: string;
-  imageFile?: File;
-  opacity?: number;
-  width?: number;
-  height?: number;
-  positionX?: number;
-  positionY?: number;
 };
 
 export type CreateUpdateTaskRequest = {
   title: string;
   description: string;
-  tags: string;
+  tags: string[];
+  options?: TaskAppearanceOptions;
   status?: TaskStatus;
   isArchived?: boolean;
 };
@@ -45,4 +33,4 @@ export type CreateUpdateTaskRequest = {
 export type UpdateTaskArgs = {
   id: string;
   task: Partial<CreateUpdateTaskRequest>;
-}
+};

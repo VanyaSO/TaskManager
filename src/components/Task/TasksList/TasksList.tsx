@@ -3,6 +3,7 @@ import { TaskCard } from "../TaskCard/TaskCard.tsx";
 import { Task } from "../../../shared/types/task.ts";
 import { useState } from "react";
 import { CreateUpdateTaskModal } from "../CreateUpdateTaskModal/CreateUpdateTaskModal.tsx";
+import useMessage from "antd/es/message/useMessage";
 
 interface TasksSectionProps {
   className?: string;
@@ -12,6 +13,7 @@ interface TasksSectionProps {
 export function TasksList({ className, tasks }: TasksSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [updateTask, setUpdateTask] = useState<Task>();
+  const [messageApi, contextHolder] = useMessage();
 
   if (tasks.length === 0) {
     return (
@@ -26,10 +28,16 @@ export function TasksList({ className, tasks }: TasksSectionProps) {
 
   return (
     <>
+      {contextHolder}
+
       <Row gutter={[16, 16]} className={className}>
         {tasks.map((task) => (
           <Col key={task.id} span={8}>
-            <TaskCard task={task} onUpdate={handleUpdateTask} />
+            <TaskCard
+              task={task}
+              messageApi={messageApi}
+              onUpdate={handleUpdateTask}
+            />
           </Col>
         ))}
       </Row>

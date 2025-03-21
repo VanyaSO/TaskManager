@@ -11,15 +11,22 @@ import { CreateUpdateTaskModal } from "../../components/Task/CreateUpdateTaskMod
 import { useGetTasks } from "../../shared/hooks/useTasks.ts";
 import { setTasksAction } from "../../shared/store/taskSlice.ts";
 import { selectorTasks } from "../../shared/store/selectors.ts";
-import { AppDispatch } from "../../shared/store/store.ts";
 
 export function DashboardView() {
   const [activeSection, setActiveSection] = useState<string>("tasks");
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch();
   const { tasks } = useSelector(selectorTasks);
   const { data = [], isLoading, isError, error } = useGetTasks(activeSection);
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleClickTasksTab = () => {
+    setActiveSection("tasks");
+  };
+
+  const handleClickArchiveTab = () => {
+    setActiveSection("archive");
+  };
 
   useEffect(() => {
     if (!isLoading) {
@@ -30,14 +37,6 @@ export function DashboardView() {
   useEffect(() => {
     setFilteredTasks(tasks);
   }, [tasks]);
-
-  const handleClickTasksTab = () => {
-    setActiveSection("tasks");
-  };
-
-  const handleClickArchiveTab = () => {
-    setActiveSection("archive");
-  };
 
   const renderContent = () => {
     if (isLoading)

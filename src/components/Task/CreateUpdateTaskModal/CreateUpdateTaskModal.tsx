@@ -1,12 +1,19 @@
-import {Button, Form, Input, Modal, Space} from "antd";
-import {CreateUpdateTaskRequest, Task, UpdateTaskArgs} from "../../../shared/types/task.ts";
-import {useEffect} from "react";
+import { Button, ColorPicker, Form, Input, Modal, Space } from "antd";
+import {
+  CreateUpdateTaskRequest,
+  Task,
+  UpdateTaskArgs,
+} from "../../../shared/types/task.ts";
 import styles from "./CreateUpdateTaskModal.module.scss";
-import {useCreateTask, useUpdateTask} from "../../../shared/hooks/useTasks.ts";
+import {
+  useCreateTask,
+  useUpdateTask,
+} from "../../../shared/hooks/useTasks.ts";
 import { useForm } from "antd/es/form/Form";
-import {updateTaskAction} from "../../../shared/store/taskSlice.ts";
-import {useDispatch} from "react-redux";
+import { updateTaskAction } from "../../../shared/store/taskSlice.ts";
+import { useDispatch } from "react-redux";
 import useMessage from "antd/es/message/useMessage";
+import { useEffect } from "react";
 
 interface CreateUpdateTaskModalProps {
   isModalOpen: boolean;
@@ -15,20 +22,23 @@ interface CreateUpdateTaskModalProps {
   type: "create" | "update";
 }
 
+interface FormValues {
+  title: string;
+  description: string;
+  tags: string;
+  backgroundColor: any;
+}
+
 export function CreateUpdateTaskModal({
   isModalOpen,
   setIsModalOpen,
   task,
   type,
 }: CreateUpdateTaskModalProps) {
-  const [form] = useForm();
-  const {
-    contextHolder: createTaskContextHolder,
-    createTask: { mutate: createTask },
-  } = useCreateTask();
-
-  const {mutate: updateTask} = useUpdateTask();
-  const [messageApi, updateTaskContextHolder] = useMessage();
+  const [form] = useForm<FormValues>();
+  const [messageApi, contextHolder] = useMessage();
+  const { mutate: createTask } = useCreateTask();
+  const { mutate: updateTask } = useUpdateTask();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -37,57 +47,84 @@ export function CreateUpdateTaskModal({
         title: task.title,
         description: task.description,
         tags: task.tags.join(", "),
+        backgroundColor: task.options?.backgroundColor,
       });
     }
-  }, [task]);
+  });
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: FormValues): void => {
+    const hexColor: string =
+      values.backgroundColor?.metaColor?.toHexString() ||
+      task?.options?.backgroundColor;
+    const tags: string[] = values.tags
+      .split(",")
+      .map((tag: string) => tag.trim());
+
     if (type === "update" && task) {
       const updatedFields: Partial<CreateUpdateTaskRequest> = {};
 
-      Object.keys(values).forEach((key: string) => {
-        const value = values[key];
-        const initialValue = key === "tags" ? task.tags.join(", ") : task[key as keyof Task];
+      if (values.title !== task.title) updatedFields.title = values.title;
+      if (values.description !== task.description)
+        updatedFields.description = values.description;
 
-        if (value !== initialValue) {
-          updatedFields[key as keyof CreateUpdateTaskRequest] = value;
-        }
-      });
+      const hasTagsChanged: boolean =
+        tags.length !== task.tags.length ||
+        tags.some((tag: string, index: number) => tag !== task?.tags[index]);
+      if (hasTagsChanged) updatedFields.tags = tags;
+
+      const initialBgColor: string | undefined = task.options?.backgroundColor;
+      if (hexColor !== initialBgColor) {
+        updatedFields.options = {
+          backgroundColor: hexColor,
+        };
+      }
 
       if (Object.keys(updatedFields).length > 0) {
         const updatedTask: UpdateTaskArgs = {
           id: task.id,
           task: updatedFields,
-        }
+        };
+
+        console.log(updatedTask);
         updateTask(updatedTask, {
-          onSuccess:(response: Task) => {
-            dispatch(updateTaskAction(response))
+          onSuccess: (task: Task) => {
+            dispatch(updateTaskAction(task));
             messageApi.success("Задача обновлена");
           },
-        })
+        });
       }
     } else if (type === "create") {
       const newTask: CreateUpdateTaskRequest = {
         title: values.title,
         description: values.description,
-        tags: values.tags,
+        tags,
+        options: {
+          backgroundColor: hexColor,
+        },
       };
 
-      createTask(newTask);
+      createTask(newTask, {
+        onSuccess: () => {
+          messageApi.success("Задача добавлена");
+        },
+      });
     }
 
+    onCancel();
+  };
+
+  const onCancel = (): void => {
     setIsModalOpen(false);
     form.resetFields();
   };
 
   return (
     <>
-      {createTaskContextHolder}
-      {updateTaskContextHolder}
+      {contextHolder}
       <Modal
         title={type === "create" ? "Добавить задачу" : "Обновить задачу"}
         open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
+        onCancel={onCancel}
         footer={null}
         className={styles.root}
       >
@@ -128,14 +165,19 @@ export function CreateUpdateTaskModal({
           >
             <Input />
           </Form.Item>
-          <Form.Item>
-            <Space className={styles.button_container}>
-              <Button onClick={() => setIsModalOpen(false)}>Отмена</Button>
-              <Button type="primary" htmlType="submit">
-                {type === "create" ? "Добавить" : "Обновить"}
-              </Button>
-            </Space>
+          <Form.Item
+            label="Цвет фона"
+            name="backgroundColor"
+            initialValue={task?.options?.backgroundColor}
+          >
+            <ColorPicker size="small" showText format="hex" />
           </Form.Item>
+          <Space className={styles.button_container}>
+            <Button type="primary" htmlType="submit">
+              {type === "create" ? "Создать" : "Обновить"}
+            </Button>
+            <Button onClick={onCancel}>Отменить</Button>
+          </Space>
         </Form>
       </Modal>
     </>
